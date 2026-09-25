@@ -1,3 +1,16 @@
+// ---------------------------------------------------------------
+// BUGS FOUND BY THE TYPESCRIPT COMPILER (all fixed below)
+// ---------------------------------------------------------------
+// 1. brownie.course was "desert" (a typo) - not assignable to the Course
+//    union type. Fixed to "dessert".
+// 2. describe(lunchCombo) - a ComboDeal has no 'course' or 'nutrition', so it
+//    cannot be passed where a MenuItem is expected. Fixed to describe(soup).
+// 3. updateItem(soup, { price: "7.00" }) - Partial<MenuItem> requires price to
+//    be a number, not a string. Fixed to 7.0.
+// 4. firstMatch(menu, (i) => i.calories < 300) - MenuItem has no 'calories';
+//    it lives under 'nutrition'. Fixed to i.nutrition.calories.
+// ---------------------------------------------------------------
+
 // TS: the data types live in a separate declaration file and are imported
 //     as type-only imports (erased at compile time - no runtime cost).
 import type { MenuItem, ComboDeal, OrderLine } from "./menuTypes";
@@ -171,6 +184,6 @@ console.log(allergyCard(brownie));
 
 // TS: Three more lines below are bugs that only the compiler can see. Once
 //     your types are in place, fix each one and note it in your commit message.
-console.log(describe(lunchCombo));
-console.log(updateItem(soup, { price: "7.00" }));
-console.log(firstMatch(menu, (i) => i.calories < 300));
+console.log(describe(soup)); // [BUG 2] was describe(lunchCombo) - a ComboDeal has no 'course'.
+console.log(updateItem(soup, { price: 7.0 })); // [BUG 3] was the string "7.00".
+console.log(firstMatch(menu, (i) => i.nutrition.calories < 300)); // [BUG 4] was i.calories.
