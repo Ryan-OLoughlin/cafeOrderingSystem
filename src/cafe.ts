@@ -1,3 +1,7 @@
+// TS: the data types live in a separate declaration file and are imported
+//     as type-only imports (erased at compile time - no runtime cost).
+import type { MenuItem, ComboDeal, OrderLine } from "./menuTypes";
+
 // ---------------------------------------------------------------
 // 1. THE MENU
 // ---------------------------------------------------------------
@@ -5,7 +9,7 @@
 // TS: These three objects share a structure - declare an interface (call it
 //     MenuItem) that describes it, and annotate each declaration with it.
 //     Note that 'nutrition' is a nested object, so it needs a nested type.
-const soup = {
+const soup: MenuItem = {
   id: 1,
   name: "Roast Tomato Soup",
   course: "starter",
@@ -14,9 +18,11 @@ const soup = {
     calories: 180,
     allergens: ["celery"],
   },
+  // TS: optional property - only this item is currently on offer.
+  discountPercent: 10,
 };
 
-const risotto = {
+const risotto: MenuItem = {
   id: 2,
   name: "Mushroom Risotto",
   // TS: 'course' should only ever be one of three values. Declare a *literal
@@ -31,26 +37,29 @@ const risotto = {
   },
 };
 
-const brownie = {
+const brownie: MenuItem = {
   id: 3,
   name: "Chocolate Brownie",
-  course: "desert",
+  // [BUG 1] "desert" (typo) is not assignable to Course - fixed to "dessert".
+  course: "dessert",
   price: 6.0,
   nutrition: {
     calories: 450,
     allergens: ["milk", "eggs", "gluten"],
   },
+  // TS: optional property - only some items are seasonal.
+  availableFrom: new Date("2024-06-01"),
 };
 
 // TS: Not every item is on offer, and only some are seasonal. Add two
 //     *optional properties* to MenuItem - discountPercent (number) and
 //     availableFrom (Date) - and set them on one or two items here. The
 //     existing objects that lack them must still compile.
-const menu = [soup, risotto, brownie];
+const menu: MenuItem[] = [soup, risotto, brownie];
 
 // TS: A combo is a named bundle of menu items sold at a fixed price. Declare a
 //     second interface for it (ComboDeal: id, name, items, price).
-const lunchCombo = {
+const lunchCombo: ComboDeal = {
   id: 101,
   name: "Soup & Sweet",
   items: [soup, brownie],
@@ -59,7 +68,7 @@ const lunchCombo = {
 
 // TS: An order line is *either* a MenuItem or a ComboDeal. Declare a *type
 //     alias* for that union (e.g. OrderLine) and use it for the array below.
-const currentOrder = [risotto, lunchCombo, soup];
+const currentOrder: OrderLine[] = [risotto, lunchCombo, soup];
 
 // ---------------------------------------------------------------
 // 2. FUNCTIONS
